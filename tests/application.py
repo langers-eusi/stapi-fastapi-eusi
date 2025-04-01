@@ -22,6 +22,7 @@ from tests.shared import (
     InMemoryOrderDB,
     product_test_satellite_provider_sync_opportunity,
     product_test_spotlight_sync_async_opportunity,
+    product_test_spotlight_async_opportunity
 )
 
 
@@ -44,7 +45,7 @@ root_router = RootRouter(
     get_opportunity_search_record=mock_get_opportunity_search_record,
     conformances=[CORE, OPPORTUNITIES, ASYNC_OPPORTUNITIES],
 )
-root_router.add_product(product_test_spotlight_sync_async_opportunity)
-root_router.add_product(product_test_satellite_provider_sync_opportunity)
+root_router.add_product(product_test_spotlight_async_opportunity)
+#root_router.add_product(product_test_satellite_provider_sync_opportunity)
 app: FastAPI = FastAPI(lifespan=lifespan)
 app.include_router(root_router, prefix="")

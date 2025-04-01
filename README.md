@@ -61,7 +61,7 @@ implementations. However, a minimal test implementation is provided in
 documentation. Run it like so from the project root:
 
 ```commandline
-uvicorn application:app --app-dir ./tests --reload
+uvicorn application:app --app-dir ./src/eusi --env-file .env --reload
 ```
 
 With the `uvicorn` defaults the app should be accessible at
