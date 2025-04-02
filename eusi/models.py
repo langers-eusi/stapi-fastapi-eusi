@@ -7,6 +7,9 @@ from src.stapi_fastapi.models.constraints import Constraints
 from src.stapi_fastapi.models.opportunity import OpportunityProperties
 from src.stapi_fastapi.models.order import OrderParameters
 
+MAXAR_SATELLITES = ["WV01","WV02","WV03","GE01"]
+
+
 class TaraStatusHistory(BaseModel):
     oldStatus: str
     newStatus: str
@@ -37,7 +40,7 @@ class TaraParametersResponse(BaseModel):
     endUseCode: str
     endUsers: list[TaraEndUser]
     taskingParameters: TaraTaskingParameters
-    
+
 
 class TaraSubOrderResponse(BaseModel):
     orderId: UUID
@@ -206,6 +209,39 @@ class MaxarOrderParameters(OrderParameters):
     endUseCode: str = Field(
         title="EUSI Enduse Code",
         description="Parameter containing the end use code describing usage of the imagery"
+    )
+    productLevel: str = Field(
+        title="Product Level",
+        description="Property containing the production level to apply to delivered product",
+        default="OR2A",
+        enum=["OR2A","ORTHO","2A"]
+    )
+
+    bandCombination: str = Field(
+        title="Band combination",
+        description="Property containing the band combination to apply to delivered produc",
+        default="PAN",
+        enum=["PAN","4BB","4PS","8BB"]
+    )
+
+    resolution: str = Field(
+        title="Bit depth",
+        description="Property containing the bit depth to apply to delivered product",
+        default="0.50",
+        enum=["0.50","0.40","0.30"]
+    )
+
+    stereo: bool = Field(
+        title="Stereo",
+        description="Property describing whether to collect this subOrder as in-track stereo",
+        default=False
+    )
+
+    vehicle: list[str]= Field(
+        title="Selected Vehicles",
+        description="Array containing the values of the allowed vehicles for imagery collection",
+        default=MAXAR_SATELLITES,
+        enum=MAXAR_SATELLITES
     )
     #endUseCode: str = list[Literal["AGR", "DNI", "EDU", "ERM", "FOR", "HUM", "LBS", "MAR", "MIN", "NAT", "DEM", "RED", "RUR", "SIM", "TEL", "URB", "UTL", "SHL"]]
 

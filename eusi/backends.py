@@ -33,7 +33,7 @@ async def get_orders(
     try:
         start = 0
         limit = min(limit, 100)
-        orders = await request.state._TARA.get_orders(request.headers['Authorization'],limit)
+        orders = request.state._TARA.get_orders(request.headers['Authorization'],limit)
         print(orders)
         if orders is None:
             return Success(Nothing)
@@ -108,3 +108,24 @@ async def get_opportunity_search_record(
         )
     except Exception as e:
         return Failure(e) 
+
+async def get_opportunity_search_records(
+    next: str | None,
+    limit: int,
+    request: Request,
+) -> ResultE[tuple[list[OpportunitySearchRecord], Maybe[str]]]:
+    try:
+        start = 0
+        limit = min(limit, 100)
+        search_records = request.state._TARA.get_feasibility_results(request.headers['Authorization'],limit)
+
+        if next:
+            start = int(next)
+        end = start + limit
+        page = search_records[start:end]
+
+        if end > 0 and end < len(search_records):
+            return Success((page, Some(str(end))))
+        return Success((page, Nothing))
+    except Exception as e:
+        return Failure(e)

@@ -16,7 +16,7 @@ from stapi_fastapi.models.order import (
 
 from stapi_fastapi.models.opportunity import OpportunityPayload
 
-from src.eusi.shared import (
+from eusi.shared import (
     tara_feasibility_response_to_search_record,
     tara_feasibility_to_search_record,
     tara_order_to_order_status,
@@ -24,7 +24,7 @@ from src.eusi.shared import (
     opportunity_request_to_feasibility,
     order_request_to_tara_quote_request
 )
-from src.eusi.models import (
+from eusi.models import (
     FeasibilityAsyncResponse,
     TaraOrderAcceptResponse,
     TaraSubOrderResponse,
@@ -54,11 +54,12 @@ class TARAClient:
             headers=headers,
         )
         response.raise_for_status()
+        print(response.json())
         order_response = TaraSubOrderResponse.model_validate(response.json())
         print(order_response)
         return tara_order_to_order(order_response,"maxar")
 
-    async def get_orders(self, authtoken: str, limit: int) -> list[Order]:
+    def get_orders(self, authtoken: str, limit: int) -> list[Order]:
         headers = {"Authorization": authtoken}
         orders_url = f'{self.tara_api_url}/api/v1/internal/suborders'
         response = httpx.get(
@@ -112,6 +113,21 @@ class TARAClient:
         feasi_response = FeasibilityAsyncResponse.model_validate(res)
         print(feasi_response)
         return tara_feasibility_to_search_record(feasibility_id=feasibility_id,feasibility_response=feasi_response,product_id="maxar")
+    
+    def get_feasibility_results(self, authtoken: str, limit: int):
+        headers = {"Authorization": authtoken}
+        feasibility_url = f'{self.tara_api_url}/api/v1/feasibility/'
+        response = httpx.get(
+            url=feasibility_url,
+            headers=headers,
+        )
+        response.raise_for_status()
+        res = response.json()
+        print(res)
+        feasi_response = FeasibilityAsyncResponse.model_validate(res)
+        print(feasi_response)
+        #
+        #return tara_feasibility_to_search_record(feasibility_id=feasibility_id,feasibility_response=feasi_response,product_id="maxar")
     
     def create_order(self, authtoken: str, order: OrderPayload) -> Order:
         headers = {"Authorization": authtoken}

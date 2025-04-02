@@ -23,7 +23,7 @@ from eusi.models import (
     MaxarOpportunityProperties,
     MaxarOrderParameters
 )
-from src.eusi.backends import get_opportunity_search_record, search_opportunities_async, create_order
+from eusi.backends import get_opportunity_search_record, search_opportunities_async, create_order
 from stapi_fastapi.models.shared import Link
 from stapi_fastapi.models.opportunity import (
     Opportunity,
@@ -259,9 +259,13 @@ def order_request_to_tara_quote_request(order_request: OrderPayload):
                     orderType='taskingOrder',
                     aoi=order_request.geometry,
                     feasibilityId=order_request.order_parameters.opportunityRequestId,
-                    productionParameters=TaraProductionParametersRequest(),
                     endUseCode=order_request.order_parameters.endUseCode,
-                    endUserIds=[order_request.order_parameters.endUserIds]
+                    endUserIds=[order_request.order_parameters.endUserIds],
+                    productionParameters=TaraProductionParametersRequest(
+                        productLevel=order_request.order_parameters.productLevel,
+                        bandCombination=order_request.order_parameters.bandCombination,
+                        resolution=order_request.order_parameters.resolution,
+                    )
 
                 )
             )]
